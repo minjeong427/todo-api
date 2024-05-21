@@ -14,10 +14,13 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     database: mysql
 
 # swagger setting
 springdoc:
   swagger-ui:
     path: /myapi.html
+
+jwt:
+  secret: baedRul47vglwr0BJuUw5Vol6LFgSKdQQnaU7oRgE7aaKMrCx5Qxv0BjndF5/wrSxgHodg1RYFxxbsOtI13VMw==
