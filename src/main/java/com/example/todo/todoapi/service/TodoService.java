@@ -6,6 +6,7 @@ import com.example.todo.todoapi.dto.response.TodoDetailResponseDTO;
 import com.example.todo.todoapi.dto.response.TodoListResponseDTO;
 import com.example.todo.todoapi.entity.Todo;
 import com.example.todo.todoapi.repository.TodoRepository;
+import com.example.todo.userapi.entity.Role;
 import com.example.todo.userapi.entity.User;
 import com.example.todo.userapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,13 @@ public class TodoService {
         // toEntity의 매개값으로 User 엔터티도 함께 전달해야 합니다. -> userId로 회원 엔터티를 조회해야 함.
         User user = getUser(userId);
 
-        todoRepository.save(requestDTO.toEntity(user));
+        // 권한에 다른 글쓰기 제한 처리
+        // 일반 회원이 일정을 5개 초과해서 작성하면 예외를 발생.
+        if (user.getRole() == Role.COMMON && todoRepository.countByUser(user) >= 5) {
+            throw new IllegalArgumentException("일반 회원은 더이상 일정을 등록할 수 없습니다.");
+        }
+
+            todoRepository.save(requestDTO.toEntity(user));
         log.info("할 일 저장 완료! 제목: {}", requestDTO.getTitle());
         // 할 일 저장이 끝나면 목록을 불러오는데, 지금까지는 그냥 전부 다 갖고왔어도 된다.
         // 이제는 회원별로 할 일을 등록하기 때문에, 방금 할 일을 추가한 그 회원의 목록을 가져와야 한다.

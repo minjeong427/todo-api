@@ -52,13 +52,9 @@ public class UserController {
         ResponseEntity<FieldError> result1 = getFieldErrorResponseEntity(result);
         if (result1 != null) return result1;
 
-        try {
-            UserSignUpResponseDTO responseDTO = userService.create(dto);
-            return ResponseEntity.ok().body(responseDTO);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        UserSignUpResponseDTO responseDTO = userService.create(dto);
+        return ResponseEntity.ok().body(responseDTO);
+
     }
 
 
@@ -72,18 +68,13 @@ public class UserController {
             @Validated @RequestBody LoginRequestDTO dto,
             BindingResult result
     ) {
-       log.info("/api/auth/signin - POST!! - {}", dto);
+        log.info("/api/auth/signin - POST!! - {}", dto);
 
         ResponseEntity<FieldError> response = getFieldErrorResponseEntity(result);
         if (response != null) return response;
 
-        try {
-            LoginResponseDTO responseDTO = userService.authenticate(dto);
-            return ResponseEntity.ok().body(responseDTO);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        LoginResponseDTO responseDTO = userService.authenticate(dto);
+        return ResponseEntity.ok().body(responseDTO);
     }
 
     // 일반 회원을 프리미엄 회원으로 승격하는 요청 처리
@@ -93,6 +84,9 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_COMMON')")
     public ResponseEntity<?> promote(@AuthenticationPrincipal TokenUserInfo userInfo) {
         log.info("/api/auth/promote - PUT!");
+
+        LoginResponseDTO responseDTO = userService.promoteToPremium(userInfo);
+        return ResponseEntity.ok().body(responseDTO);
 
     }
 
