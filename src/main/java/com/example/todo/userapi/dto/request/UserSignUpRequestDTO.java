@@ -18,7 +18,7 @@ public class UserSignUpRequestDTO {
     private String email;
 
     @NotBlank
-    @Size(min = 8, max=20)
+    @Size(min = 8, max = 20)
     private String password;
 
     @NotBlank
@@ -33,9 +33,8 @@ public class UserSignUpRequestDTO {
                 .profileImg(uploadedFilePath)
                 .build();
     }
+
 }
-
-
 
 
 

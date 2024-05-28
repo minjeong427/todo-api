@@ -34,27 +34,19 @@ public class TodoController {
             BindingResult result
     ) {
         log.info("/api/todos GET! - dto: {}", requestDTO);
+        log.info("TokenUserInfo: {}", userInfo);
         ResponseEntity<List<FieldError>> validatedResult = getValidatedResult(result);
         if (validatedResult != null) return validatedResult;
 
-        try {
-            TodoListResponseDTO responseDTO = todoService.create(requestDTO, userInfo.getUserId());
-            return ResponseEntity
-                    .ok()
-                    .body(responseDTO);
-        } catch (Exception e) {
-            return ResponseEntity
-                    .internalServerError()
-                    .body(TodoListResponseDTO.builder()
-                            .error(e.getMessage())
-                            .build());
-        }
+        TodoListResponseDTO responseDTO = todoService.create(requestDTO, userInfo.getUserId());
+        return ResponseEntity.ok().body(responseDTO);
     }
-
 
     // 할 일 목록 요청
     @GetMapping
-    public ResponseEntity<?> retrieveTodoList(@AuthenticationPrincipal TokenUserInfo userInfo) {
+    public ResponseEntity<?> retrieveTodoList(
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ) {
         log.info("/api/todos GET request!");
         try {
             TodoListResponseDTO responseDTO = todoService.retrieve(userInfo.getUserId());
@@ -67,7 +59,6 @@ public class TodoController {
                             .build());
         }
     }
-
 
     // 할 일 삭제 요청
     @DeleteMapping("/{id}")
@@ -90,7 +81,6 @@ public class TodoController {
         }
     }
 
-
     // 할 일 수정하기
     @PatchMapping
     public ResponseEntity<?> updateTodo(
@@ -99,7 +89,7 @@ public class TodoController {
             BindingResult result
     ) {
         ResponseEntity<List<FieldError>> validatedResult = getValidatedResult(result);
-        if (validatedResult != null) return validatedResult;
+        if(validatedResult != null) return validatedResult;
 
         try {
             return ResponseEntity.ok().body(todoService.update(requestDTO, userInfo.getUserId()));
@@ -107,7 +97,9 @@ public class TodoController {
             return ResponseEntity.internalServerError()
                     .body(e.getMessage());
         }
+
     }
+
 
 
     // 입력값 검증(Validation)의 결과를 처리해 주는 전역 메서드
@@ -123,4 +115,5 @@ public class TodoController {
         }
         return null;
     }
+
 }
